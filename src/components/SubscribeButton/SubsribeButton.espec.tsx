@@ -1,65 +1,68 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { mocked } from 'ts-jest/utils'
+import { mocked } from 'ts-jest/utils';
 import { signIn, useSession } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import { SubscribeButton } from '.';
 
-jest.mock('next-atuh/client');
+jest.mock('next-auth/client');
 jest.mock('next/router');
 
 describe('SubscribeButton component', () => {
-    it('renders correctly', () => {
-        const useSessionMocked = mocked(useSession)
 
-        useSessionMocked.mockReturnValueOnce([null, false])
+  it('renders corretly', () => {
+    const useSessionMocked = mocked(useSession)
 
-        render(<SubscribeButton />)
+    useSessionMocked.mockReturnValueOnce([null, false])
 
-        expect(screen.getByText('Subscribe now')).toBeInTheDocument()
-    })
+    render(<SubscribeButton />)
+  
+    expect(screen.getByText('Subscribe now')).toBeInTheDocument();
+  })
 
-    it('redirects user to sign in when not authenticated', () => {
-        const signInMocked = mocked(signIn)
-        const useSessionMocked = mocked(useSession)
+  it('redirects user to sign in when not authenticated', () => {
+    const signInMocked = mocked(signIn);
+    const useSessionMocked = mocked(useSession)
+    
+    useSessionMocked.mockReturnValueOnce([null, false])
 
-        useSessionMocked.mockReturnValueOnce([null, false])
-        
-        render(<SubscribeButton />)
+    render(<SubscribeButton />)
 
-        const subscribeButton = screen.getByText('Subscribe now');
+    const subscribeButton = screen.getByText('Subscribe now');
 
-        fireEvent.click(subscribeButton)
+    fireEvent.click(subscribeButton)
 
-        expect(signInMocked).toHaveBeenCalled()
-    })
+    expect(signInMocked).toHaveBeenCalled();
+  });
 
-    it('redirects user to posts when user already has a subscription', () => {
-        const useRouterMocked = mocked(useRouter)
-        const useSessionMocked = mocked(useSession)
-        const pushMock = jest.fn()
+  it('redirects user to posts when user already has a subscription', () => {
+    const useRouterMocked = mocked(useRouter);
+    const useSessionMocked = mocked(useSession);
+    const pushMocked = jest.fn()
 
-        useSessionMocked.mockReturnValueOnce([
-            {
-                user: { 
-                  name: 'John Doe', 
-                  email: 'jon.doe@example.com'
-                },
-                activeSubscription: 'fake-active-subscription',
-                expires: 'fakes-expires'},
-            false
-        ])
+    useSessionMocked.mockReturnValueOnce([
+      {
+        user: {
+          name: 'John Doe',
+          email: 'john.doe@example.com'
+        },
+        activeSubscription: 'fake=active-subscription',
+        expires: 'fake-expires'
+      },
+      false
+    ])
 
-        useRouterMocked.mockReturnValueOnce({
-            push: jest.fn(),
-        } as any)
+    useRouterMocked.mockReturnValueOnce({
+      push: pushMocked
+    } as any)
 
-        render(<SubscribeButton />)
+    render (<SubscribeButton />)
 
-        const subscribeButton = screen.getByText('Subscribe now')
+    const subscribeButton = screen.getByText('Subscribe now');
 
-        fireEvent.click(subscribeButton)
+    fireEvent.click(subscribeButton)
 
-        expect(pushMock).toHaveBeenCalled()
-    })
+    expect(pushMocked).toHaveBeenCalledWith('/posts');
+  })
+  
 })
 

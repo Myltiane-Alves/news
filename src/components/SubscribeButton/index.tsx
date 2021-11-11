@@ -2,8 +2,7 @@ import { signIn, useSession } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import { api } from '../../services/api';
 import { getStripeJs } from '../../services/stripe-js';
-import styles from './styles.module.scss';
-
+import styles from './styles.module.scss'
 
 export function SubscribeButton() {
   const [session] = useSession();
@@ -12,12 +11,12 @@ export function SubscribeButton() {
   async function handleSubscribe() {
     if(!session) {
       signIn('github')
-      return;
+      return
     }
 
     if(session.activeSubscription) {
-      router.push('/post');
-      return
+      router.push('/posts');
+      return;
     }
 
     try {
@@ -27,17 +26,18 @@ export function SubscribeButton() {
 
       const stripe = await getStripeJs();
 
-      await stripe.redirectToCheckout({ sessionId })
-    }  catch (err) {
-      alert(err.message)
+      await stripe.redirectToCheckout({sessionId})
+    } catch (err) {
+      alert(err.message);
     }
+
   }
 
   return (
     <button
-      type="button"
-      className={styles.subscribeButton}
-      onClick={handleSubscribe}
+    type="button"
+    className={styles.subscribeButton}
+    onClick={handleSubscribe}
     >
       Subscribe now
     </button>

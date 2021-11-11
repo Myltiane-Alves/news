@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { mocked } from 'ts-jest/utils';
 import Post, { getStaticProps } from '../../pages/posts/preview/[slug]';
-
+import { stripe } from '../../services/stripe';
 import { getPrismicClient } from '../../services/prismic';
-import { useSession } from 'next-auth/client';
+import { useSession, getSession } from 'next-auth/client';
 import { useRouter } from 'next/router';
 
 const post = {

@@ -30,3 +30,4 @@ describe('SignInButton component', () => {
     expect(screen.getByText('John Doe')).toBeInTheDocument();
   })
 })
+
